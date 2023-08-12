@@ -63,7 +63,7 @@ async def get_current_active_superuser(
     if not crud.user.is_superuser(current_user):
         raise exc.InternalServiceError(
             status_code=403,
-            detail="Permision Error",
+            detail="Permission Error",
             msg_code=utils.MessageCodes.permisionError,
         )
     return current_user
