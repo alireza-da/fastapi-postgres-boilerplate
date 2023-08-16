@@ -18,6 +18,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         query = select(User).filter(User.email == email)
         return self._first(db.scalars(query))
 
+    def get_by_id(
+        self, db: Session | AsyncSession, uid: int
+    ) -> User | None | Awaitable[User | None]:
+        query = select(User).filter(User.id == uid)
+        return self._first(db.scalars(query))
+
     async def create(self, db: Session | AsyncSession, *, obj_in: UserCreate) -> User:
         obj_in_data = jsonable_encoder(obj_in)
         obj_in_data["hashed_password"] = get_password_hash(obj_in.password)
