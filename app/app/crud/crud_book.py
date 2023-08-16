@@ -46,6 +46,13 @@ class CRUDTakenBook(CRUDBase[TakenBook, TakenBook, TakenBook]):
     ) -> TakenBook | None | Awaitable[TakenBook | None]:
         query = select(TakenBook).filter(TakenBook.id == tb_id)
         return self._first(db.scalars(query))
+    def get_by_user(self, db: Session | AsyncSession, u_id: int):
+        query = select(TakenBook).filter(TakenBook.user == u_id)
+        return self._all(db.scalars(query))
+
+    def get_by_book(self, db: Session | AsyncSession, b_id: int):
+        query = select(TakenBook).filter(TakenBook.book == b_id)
+        return self._all(db.scalars(query))
 
     def get_all(self, db: Session | AsyncSession):
         query = select(TakenBook)

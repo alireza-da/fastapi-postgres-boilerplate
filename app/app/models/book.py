@@ -23,9 +23,12 @@ class Book(Base):
 
 class TakenBook(Base):
     __tablename__ = "takenbooks"
+
     id = Column(Integer, primary_key=True, index=True)
     book = ForeignKey("Book")
     user = ForeignKey("User")
     taken_date = Column(String, index=True)
     returning_date = Column(String, index=True)
+    valid_borrowed_days = Column(Integer, index=True)
+    status = Column(Integer, index=True)
     bill = Column(Float, index=True)

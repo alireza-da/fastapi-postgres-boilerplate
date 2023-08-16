@@ -15,7 +15,7 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 
 from app import crud, models, schemas, utils
 from app.api import deps
-from app.core import security
+from app.core import security, library_management
 from app.core.config import settings
 from app.core.security import get_password_hash
 from app.utils import APIResponseType, APIResponse
@@ -67,10 +67,14 @@ async def get_all_taken_books(
 
 @router.post('/taken-books/create')
 async def create_taken_book(*, db: AsyncSession = Depends(deps.get_db_async), book_in: schemas.TakenBook):
-    # TODO check if book can be borrowed
-
-    book = await crud.taken_book.create(db, obj_in=book_in)
-    return APIResponse(book)
+    user = await crud.user.get_by_id(db, book_in.user)
+    book = schemas.Book.from_db(db_obj=await crud.book.get_by_id(db, book_in.book))
+    tb = schemas.TakenBook.from_db(db_obj=book_in)
+    if library_management.can_borrow_from_cat(db, book, user):
+        days = library_management.find_valid_rent_days(db, book)
+        book_in.valid_borrowed_days = days
+        book = await crud.taken_book.create(db, obj_in=book_in)
+        return APIResponse(book)
 
 @router.put('/taken-books/update')
 async def update_taken_book(*, db:AsyncSession=Depends(deps.get_db_async),
