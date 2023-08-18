@@ -293,10 +293,10 @@ async def get_statistics(*, db: AsyncSession = Depends(deps.get_db_async)):
 
     return {"msg": "Statistics Calculated",
             "sell": f"Sold {len(sells)} books | Gain: {sells_overall_gain}$",
-            "rent": f"Loaned {len(rents)} books | Gain: {rents_overall_gain}$ & {len(in_rents)} books have been given but not delivered yet ",
-            "sell_data": sells,
-            "rent_data": rents,
-            "in_rent_data": in_rents,
+            "rent": f"Loaned {len(rents)} books | Gain: {rents_overall_gain}$ & {len(in_rents)} books have been rented but not delivered yet ",
+            # "sell_data": sells,
+            # "rent_data": rents,
+            # "in_rent_data": in_rents,
             "category_classified": cats_profit
             }
 
