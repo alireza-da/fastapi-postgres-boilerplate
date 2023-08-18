@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 
 from app.crud.base import CRUDBase
 from app.models.book import *
-
+from app.schemas.book import TakenBookStatus
 
 
 class CRUDBook(CRUDBase[Book, Book, Book]):
@@ -50,6 +50,10 @@ class CRUDTakenBook(CRUDBase[TakenBook, TakenBook, TakenBook]):
         query = select(TakenBook).filter(TakenBook.user == u_id)
         return self._all(db.scalars(query))
 
+    def get_books_per_user(self, db: Session | AsyncSession, u_id: int):
+        query = select(TakenBook.book).filter(TakenBook.user == u_id).distinct()
+        return self._all(db.scalars(query))
+
     def get_by_book(self, db: Session | AsyncSession, b_id: int):
         query = select(TakenBook).filter(TakenBook.book == b_id)
         return self._all(db.scalars(query))
@@ -58,10 +62,14 @@ class CRUDTakenBook(CRUDBase[TakenBook, TakenBook, TakenBook]):
         query = select(TakenBook)
         return self._all(db.scalars(query))
 
+    def get_undelivered_tbs(self, db: Session | AsyncSession):
+        query = select(TakenBook).filter(TakenBook.status == TakenBookStatus().TAKEN
+                                         or TakenBook.status == TakenBookStatus().OVERDUE)
+        return self._all(db.scalars(query))
+
     async def create(self, db: Session | AsyncSession, *, obj_in: TakenBook) -> TakenBook:
         obj_in_data = jsonable_encoder(obj_in)
         obj_in_data = {k: v for k, v in obj_in_data.items() if v is not None and type(v) != datetime.datetime}
-
         return await super().create(db, obj_in=obj_in_data)
 
     def update(
