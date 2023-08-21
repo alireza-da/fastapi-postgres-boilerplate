@@ -18,7 +18,8 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    category = Column(Integer, index=True) # SQLAlchemy had a problem with ForeignKey() and It hadn't been detecting ForeignKey as a column
+    category = Column(Integer, ForeignKey("categories.id"))
+    category_ref = relationship("Category", back_populates="books")
     amount = Column(Integer, index=True)
     serial_number = Column(String, index=True)
     sell_price = Column(Float, index=True)
@@ -28,10 +29,10 @@ class TakenBook(Base):
     __tablename__ = "takenbooks"
 
     id = Column(Integer, primary_key=True, index=True)
-    book = Column(Integer)
-    # book = relationship(Book, foreign_keys=[book_id], primaryjoin='Book.id == TakenBook.book_id')
-    user = Column(Integer)
-    # user = relationship(User, foreign_keys=[user_id], primaryjoin='User.id == TakenBook.user_id')
+    book = Column(Integer, ForeignKey("books.id"))
+    book_ref = relationship("Book", back_populates="takenbooks")
+    user = Column(Integer, ForeignKey("user.id"))
+    user_ref = relationship("User", back_populates="takenbooks")
     taken_date = Column(String, index=True)
     returning_date = Column(String, index=True)
     valid_borrowed_days = Column(Integer, index=True)
