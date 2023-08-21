@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     USERS_OPEN_REGISTRATION: bool = True
     SECRET_KEY: str
     # 60 minutes * 24 hours * 1 day = 1 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
-    REFRESH_TOKEN_EXPIRE_MINUTES: int
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 0
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 0
     ALGORITHM: str = "HS256"
 
     RABBITMQ_USERNAME: str
