@@ -105,3 +105,34 @@ async def return_book(db, msg, db_taken_book):
     taken_book.returning_date = taken_book.returning_date.strftime('YYYY-MM-DDTHH:MM:SS')
     await crud.taken_book.update(db, db_obj=db_taken_book, obj_in=taken_book)
     return {"msg": msg, "details": taken_book}
+
+async def find_user_tbs(db, book_ids, name: str = None, category_id: int = None
+                        , borrowed_times: int = None, amount: int = None):
+    books = []
+    filtered = False
+    for bi in book_ids:
+        book = await crud.book.get_by_id(db, bi)
+        if name:
+            filtered = True
+            if name in book.name:
+                books.append(book)
+                continue
+        if category_id:
+            filtered = True
+            if book.category == category_id:
+                books.append(book)
+                continue
+        if borrowed_times:
+            filtered = True
+            tbs = await crud.taken_book.get_by_book(db, bi)
+            if len(tbs) == borrowed_times:
+                books.append(book)
+                continue
+        if amount:
+            filtered = True
+            if book.amount == amount:
+                books.append(book)
+                continue
+        if not filtered:
+            books.append(book)
+    return books
